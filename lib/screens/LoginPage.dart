@@ -1,6 +1,7 @@
 import 'package:chatapp/screens/SignUpPage.dart';
 import 'package:chatapp/screens/UsersPage.dart';
 import 'package:chatapp/services/AuthService.dart';
+import 'package:chatapp/services/RemoteConfigService.dart';
 import 'package:chatapp/widgets/ButtonWidget.dart';
 import 'package:chatapp/widgets/TextFormWidget.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
 
   FirebaseAuth auth = FirebaseAuth.instance;
+  final remoteConfig = FirebaseRemoteConfigService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +38,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Text(remoteConfig.getString(FirebaseRemoteConfigKeys.message)),
                 TextFormWidget(
                     controller: usernameController,
                     texthint: 'Enter Username',
