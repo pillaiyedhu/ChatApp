@@ -1,4 +1,5 @@
 import 'package:chatapp/screens/SignUpPage.dart';
+import 'package:chatapp/screens/ThreadsPage.dart';
 import 'package:chatapp/screens/UsersPage.dart';
 import 'package:chatapp/services/AuthService.dart';
 import 'package:chatapp/services/RemoteConfigService.dart';
@@ -7,6 +8,8 @@ import 'package:chatapp/widgets/TextFormWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
+// import 'package:firebase_analytics/firebase_analytics.dart';
+// import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -22,6 +25,11 @@ class _LoginPageState extends State<LoginPage> {
 
   FirebaseAuth auth = FirebaseAuth.instance;
   final remoteConfig = FirebaseRemoteConfigService();
+
+  // static FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.instance;
+  // static FirebaseInAppMessaging firebaseInAppMessaging =
+  //     FirebaseInAppMessaging.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,6 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                 ButtonWidget(
                     onTap: () {
                       login();
+                      // firebaseInAppMessaging.triggerEvent('Review');
                     },
                     text: 'Login'),
                 const SizedBox(
@@ -93,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
             .then((value) => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => UsersPage(),
+                  builder: (context) => ThreadsPage(),
                 )));
       }
     } catch (e) {

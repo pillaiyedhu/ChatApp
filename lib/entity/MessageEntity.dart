@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class MessageEntity {
   final String senderId;
   final String? senderEmail;
-  final String recieverId;
+  final String threadId;
   //final String? recieverMail;
   final String message;
   final Timestamp timestamp;
@@ -11,7 +11,7 @@ class MessageEntity {
   MessageEntity(
       {required this.senderId,
       this.senderEmail,
-      required this.recieverId,
+      required this.threadId,
       //this.recieverMail,
       required this.message,
       required this.timestamp});
@@ -19,7 +19,7 @@ class MessageEntity {
   Map<String, dynamic> toMap() {
     return {
       'senderId':senderId,
-      'recieverId':recieverId,
+      'threadId':threadId,
       'message':message,
       'timeStamp':timestamp
     };

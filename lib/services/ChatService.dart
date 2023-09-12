@@ -7,7 +7,7 @@ class ChatService extends ChangeNotifier {
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
-  Future<void> sendMessage(String recieverId, String message) async {
+  Future<void> sendMessage(String threadId, String message) async {
     final String currentUserId = auth.currentUser!.uid;
     //final String currentUserEmail = auth.currentUser!.email.toString();
     final Timestamp timeStamp = Timestamp.now();
@@ -15,29 +15,29 @@ class ChatService extends ChangeNotifier {
     //message
     MessageEntity newMessage = MessageEntity(
         senderId: currentUserId,
-        recieverId: recieverId,
+        threadId: threadId,
         message: message,
         timestamp: timeStamp);
 
     //room to save chats
-    List<String> uids = [currentUserId, recieverId];
-    uids.sort();
-    String chatRoomId = uids.join('_');
+    // List<String> uids = [currentUserId, recieverId];
+    // uids.sort();
+    // String chatRoomId = uids.join('_');
 
     await firebaseFirestore
         .collection('chat_rooms')
-        .doc(chatRoomId)
+        .doc(threadId)
         .collection('messages')
         .add(newMessage.toMap());
   }
 
-  Stream<QuerySnapshot> getMessage(String currentUserId, String recieverId) {
-    List<String> uids = [currentUserId, recieverId];
-    uids.sort();
-    String chatRoomId = uids.join('_');
+  Stream<QuerySnapshot> getMessage(String currentUserId, String threadId) {
+    // List<String> uids = [currentUserId, recieverId];
+    // uids.sort();
+    // String chatRoomId = uids.join('_');
     return firebaseFirestore
         .collection('chat_rooms')
-        .doc(chatRoomId)
+        .doc(threadId)
         .collection('messages')
         .orderBy('timeStamp', descending: false)
         .snapshots();

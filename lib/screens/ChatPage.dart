@@ -1,18 +1,20 @@
 import 'dart:io';
 
 import 'package:chatapp/services/ChatService.dart';
+import 'package:chatapp/services/ThreadService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
-  final String recieverMail;
-  final String recieverId;
+  final String threadName;
+  final String threadId;
 
   const ChatPage(
-      {required this.recieverMail, required this.recieverId, super.key});
+      {required this.threadName, required this.threadId, super.key});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -22,6 +24,7 @@ class _ChatPageState extends State<ChatPage> {
   final textController = TextEditingController();
   ChatService chatService = ChatService();
   FirebaseAuth auth = FirebaseAuth.instance;
+  //final threadService = Provider.of<ThreadService>(context, listen: false);
 
   //image
   File? image;
@@ -32,7 +35,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.recieverMail),
+          title: Text(widget.threadName),
           centerTitle: true,
           backgroundColor: Colors.greenAccent,
           actions: const [Icon(Icons.exit_to_app)],
@@ -52,7 +55,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget previousChatView() {
     return StreamBuilder(
         stream:
-            chatService.getMessage(widget.recieverId, auth.currentUser!.uid),
+            chatService.getMessage(auth.currentUser!.uid,widget.threadId),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Text('Error');
@@ -140,7 +143,6 @@ class _ChatPageState extends State<ChatPage> {
         IconButton(
             onPressed: () {
               ImagePickerMethod();
-              
             },
             icon: Icon(Icons.upload)),
 
@@ -155,23 +157,22 @@ class _ChatPageState extends State<ChatPage> {
 
   sendMessage() async {
     if (textController.text.isNotEmpty) {
-      await chatService.sendMessage(widget.recieverId, textController.text);
+      await chatService.sendMessage(widget.threadId, textController.text);
     }
     textController.clear();
   }
 
   Future ImagePickerMethod() async {
     final pick = await imagePicker.pickImage(source: ImageSource.gallery);
-    
-      if (pick != null) {
-        image = File(pick.path);
-      
-        uploadImage(File(pick.path));
-      } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('No image')));
-      }
-    
+
+    if (pick != null) {
+      image = File(pick.path);
+
+      uploadImage(File(pick.path));
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('No image')));
+    }
   }
 
   Future uploadImage(File image) async {

@@ -1,16 +1,18 @@
 import 'package:chatapp/ChatApp.dart';
 import 'package:chatapp/services/AuthService.dart';
 import 'package:chatapp/services/RemoteConfigService.dart';
+import 'package:chatapp/services/ThreadService.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 //import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 //import 'package:firebase_performance/firebase_performance.dart';
+import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-      options: const FirebaseOptions(
+    options: const FirebaseOptions(
     apiKey: "AIzaSyAfGWS4NLgSrq4mvSmmAQJoKVbZfOjHliM",
     authDomain: "chatapp-54f39.firebaseapp.com",
     projectId: "chatapp-54f39",
@@ -19,12 +21,28 @@ Future<void> main() async {
     storageBucket: "chatapp-54f39.appspot.com",
   ));
 
-  // FirebaseCrashlytics.instance.crash();
+  //FirebaseCrashlytics.instance.crash();
   //FirebasePerformance performance = FirebasePerformance.instance;
   await FirebaseRemoteConfigService().initialize();
-  runApp(ChangeNotifierProvider(
-      create: (context) {
-        return AuthService();
-      },
-      child: ChatApp()));
+  FirebaseInAppMessaging.instance;
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthService>(
+          create: (context) {
+            return AuthService();
+          },
+        ),
+
+        ChangeNotifierProvider<ThreadService>(
+          create: (context) {
+            return ThreadService();
+          },
+        ),
+      ],
+      child: ChatApp()
+    ),
+  );
+  
 }
+
